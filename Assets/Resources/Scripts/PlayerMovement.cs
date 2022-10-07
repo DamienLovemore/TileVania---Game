@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float runSpeed = 10f;
+    [SerializeField] private float jumpForce = 5f;
 
     private Vector2 moveInput;
     private Rigidbody2D playerRigidbody;
@@ -27,6 +28,14 @@ public class PlayerMovement : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+    }
+
+    void OnJump(InputValue value)
+    {
+        if(value.isPressed)
+        {
+            playerRigidbody.velocity += new Vector2(0f, jumpForce);
+        }
     }
 
     //Returns true if the player is moving.(Pressing Left or Right Arrows)
