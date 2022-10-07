@@ -12,11 +12,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private Rigidbody2D playerRigidbody;
     private Animator playerAnimator;
+    private CapsuleCollider2D playerCapsuleCollider;
 
     void Start()
     {
         playerRigidbody = GetComponent<Rigidbody2D>();
         playerAnimator = GetComponent<Animator>();
+        playerCapsuleCollider = GetComponent<CapsuleCollider2D>();
     }
         
     void Update()
@@ -27,15 +29,22 @@ public class PlayerMovement : MonoBehaviour
 
     void OnMove(InputValue value)
     {
+        //Gets the direction the player is trying to move into
         moveInput = value.Get<Vector2>();
     }
 
     void OnJump(InputValue value)
     {
-        if(value.isPressed)
+        //Gets the game ground layer
+        int targetLayer = LayerMask.GetMask("Ground");
+        //Only jumps when the player is touching the ground
+        if(playerCapsuleCollider.IsTouchingLayers(targetLayer))
         {
-            playerRigidbody.velocity += new Vector2(0f, jumpForce);
-        }
+            if (value.isPressed)
+            {
+                playerRigidbody.velocity += new Vector2(0f, jumpForce);
+            }
+        }        
     }
 
     //Returns true if the player is moving.(Pressing Left or Right Arrows)

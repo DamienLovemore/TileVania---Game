@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 1038310038}
   - component: {fileID: 1038310037}
   - component: {fileID: 1038310036}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plaftforms Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
