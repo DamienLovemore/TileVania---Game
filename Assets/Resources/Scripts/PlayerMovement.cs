@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,15 +9,22 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float runSpeed = 10f;
     [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float climbSpeed = 5f;
 
     private Vector2 moveInput;
     private Rigidbody2D playerRigidbody;
     private Animator playerAnimator;
     private CapsuleCollider2D playerCapsuleCollider;
+    private float gravityStrenght;
 
     void Start()
     {
+        //Gets the physics of the player, apply the default
+        //gravity strenght and stores its value
         playerRigidbody = GetComponent<Rigidbody2D>();
+        gravityStrenght = playerRigidbody.gravityScale;
+        playerRigidbody.gravityScale = gravityStrenght;
+
         playerAnimator = GetComponent<Animator>();
         playerCapsuleCollider = GetComponent<CapsuleCollider2D>();
     }
@@ -25,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Run();
         FlipSprite();
+        ClimbLadder();
     }
 
     void OnMove(InputValue value)
@@ -61,6 +70,15 @@ public class PlayerMovement : MonoBehaviour
         return playerHasMovement;
     }
 
+    //Returns true if the player is climbing a ladder.(Pressing Up or Down Arrows)
+    private bool isPlayerClimbing()
+    {        
+        bool playerIsClimbing;
+        playerIsClimbing = Mathf.Abs(moveInput.y) > Mathf.Epsilon;
+
+        return playerIsClimbing;
+    }
+
     //Makes the player moves horizontally
     private void Run()
     {
@@ -83,6 +101,30 @@ public class PlayerMovement : MonoBehaviour
         {
             //Math.Sign returns 1 if it is zero or positive, -1 otherwise
             transform.localScale = new Vector2(Mathf.Sign(playerRigidbody.velocity.x), 1f);
+        }        
+    }
+
+    private void ClimbLadder()
+    {
+        //Gets the game climbing layer
+        int targetLayer = LayerMask.GetMask("Climbing");
+        //Only jumps when the player is climbing a ladder
+        if (playerCapsuleCollider.IsTouchingLayers(targetLayer))
+        {
+            //Prevents player from slowly falling when climbing a ladder
+            playerRigidbody.gravityScale = 0;
+            // playerRigidbody.velocity.x does not change horizontally.
+            //Listen movement for up and down
+            Vector2 climbVelocity = new Vector2(playerRigidbody.velocity.x, moveInput.y * climbSpeed);
+            playerRigidbody.velocity = climbVelocity;
+            playerAnimator.SetBool("isClimbing", isPlayerClimbing());
+        }
+        //If it is not climbing anymore sets the gravity again, and changes
+        //its animations back to idle
+        else
+        {
+            playerRigidbody.gravityScale = gravityStrenght;
+            playerAnimator.SetBool("isClimbing", false);
         }        
     }
 }
