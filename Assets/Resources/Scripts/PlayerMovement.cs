@@ -7,14 +7,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float runSpeed = 10f;
-    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float runSpeed = 7f;
+    [SerializeField] private float jumpForce = 20f;
     [SerializeField] private float climbSpeed = 5f;
 
     private Vector2 moveInput;
     private Rigidbody2D playerRigidbody;
     private Animator playerAnimator;
-    private CapsuleCollider2D playerCapsuleCollider;
+    private CapsuleCollider2D playerBodyCollider;
+    private BoxCollider2D playerFeetCollider;
     private float gravityStrenght;
 
     void Start()
@@ -26,7 +27,8 @@ public class PlayerMovement : MonoBehaviour
         playerRigidbody.gravityScale = gravityStrenght;
 
         playerAnimator = GetComponent<Animator>();
-        playerCapsuleCollider = GetComponent<CapsuleCollider2D>();
+        playerBodyCollider = GetComponent<CapsuleCollider2D>();
+        playerFeetCollider = GetComponent<BoxCollider2D>();
     }
         
     void Update()
@@ -47,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
         //Gets the game ground layer
         int targetLayer = LayerMask.GetMask("Ground");
         //Only jumps when the player is touching the ground
-        if(playerCapsuleCollider.IsTouchingLayers(targetLayer))
+        if(playerFeetCollider.IsTouchingLayers(targetLayer))
         {
             if (value.isPressed)
             {
@@ -109,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         //Gets the game climbing layer
         int targetLayer = LayerMask.GetMask("Climbing");
         //Only jumps when the player is climbing a ladder
-        if (playerCapsuleCollider.IsTouchingLayers(targetLayer))
+        if (playerFeetCollider.IsTouchingLayers(targetLayer))
         {
             //Prevents player from slowly falling when climbing a ladder
             playerRigidbody.gravityScale = 0;
