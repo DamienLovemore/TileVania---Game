@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 7f;
     [SerializeField] private float jumpForce = 20f;
     [SerializeField] private float climbSpeed = 5f;
+    [SerializeField] private Vector2 deathKick = new Vector2(10f, 10f);
 
     private Vector2 moveInput;
     private Rigidbody2D playerRigidbody;
@@ -17,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
     private CapsuleCollider2D playerBodyCollider;
     private BoxCollider2D playerFeetCollider;
     private float gravityStrenght;
+
+    private bool isAlive = true;
 
     void Start()
     {
@@ -33,9 +36,13 @@ public class PlayerMovement : MonoBehaviour
         
     void Update()
     {
-        Run();
-        FlipSprite();
-        ClimbLadder();
+        if (isAlive)
+        {
+            Run();
+            FlipSprite();
+            ClimbLadder();
+            Die();
+        }        
     }
 
     void OnMove(InputValue value)
@@ -106,6 +113,8 @@ public class PlayerMovement : MonoBehaviour
         }        
     }
 
+    //Makes the player goes up and down in a ladder.
+    //Disables its gravity as well
     private void ClimbLadder()
     {
         //Gets the game climbing layer
@@ -128,5 +137,21 @@ public class PlayerMovement : MonoBehaviour
             playerRigidbody.gravityScale = gravityStrenght;
             playerAnimator.SetBool("isClimbing", false);
         }        
+    }
+
+    //On player contact with an enemy it "dies"
+    //(Disable its controls, and play hit animation)
+    private void Die()
+    {
+        int targetLayer = LayerMask.GetMask("Enemies");
+        if (playerBodyCollider.IsTouchingLayers(targetLayer))
+        {
+            isAlive = false;
+            playerAnimator.SetTrigger("Dying");
+
+            //Flings the player in the air, after bumping into a enemy
+            //To make it more dramatic
+            playerRigidbody.velocity = deathKick;
+        }
     }
 }
