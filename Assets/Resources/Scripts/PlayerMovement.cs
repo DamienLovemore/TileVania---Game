@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpForce = 20f;
     [SerializeField] private float climbSpeed = 5f;
     [SerializeField] private Vector2 deathKick = new Vector2(10f, 10f);
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform gun;
 
     private Vector2 moveInput;
     private Rigidbody2D playerRigidbody;
@@ -45,14 +47,33 @@ public class PlayerMovement : MonoBehaviour
         }        
     }
 
-    void OnMove(InputValue value)
+    void OnFire(InputValue value)
     {
+        //If the player is not alive then do nothing
+        if (!isAlive)
+            return;
+        
+        //Creates the new bullet
+        GameObject newBullet = Instantiate(bulletPrefab, gun.position, transform.rotation);
+        //Makes the bullet sprite face the same
+        //direction the player is facing
+        newBullet.transform.localScale = transform.localScale;
+    }
+
+    void OnMove(InputValue value)
+    {        
+        if (!isAlive)
+            return;
+
         //Gets the direction the player is trying to move into
         moveInput = value.Get<Vector2>();
     }
 
     void OnJump(InputValue value)
     {
+        if (!isAlive)
+            return;
+
         //Gets the game ground layer
         int targetLayer = LayerMask.GetMask("Ground");
         //Only jumps when the player is touching the ground
