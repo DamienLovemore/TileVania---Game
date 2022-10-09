@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 7f;
     [SerializeField] private float jumpForce = 20f;
     [SerializeField] private float climbSpeed = 5f;
-    [SerializeField] private Vector2 deathKick = new Vector2(10f, 10f);
+    [SerializeField] private Vector2 deathKick = new Vector2(15f, 10f);
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform gun;
 
@@ -23,6 +23,9 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isAlive = true;
 
+    private GameOver gameOverHandler;
+    
+
     void Start()
     {
         //Gets the physics of the player, apply the default
@@ -34,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
         playerBodyCollider = GetComponent<CapsuleCollider2D>();
         playerFeetCollider = GetComponent<BoxCollider2D>();
+
+        //Gets the only script of this type in the scene (level)
+        gameOverHandler = FindObjectOfType<GameOver>();
     }
         
     void Update()
@@ -176,6 +182,18 @@ public class PlayerMovement : MonoBehaviour
             //Flings the player in the air, after bumping into a enemy
             //To make it more dramatic
             playerRigidbody.velocity = deathKick;
+
+            gameOverHandler.Invoke("ShowGameOverHUD", 1.3f);
         }
+    }
+
+    //Returns if the player is alive or not
+    public bool IsPlayerAlive()
+    {
+        bool returnValue;
+
+        returnValue = isAlive;
+
+        return returnValue;
     }
 }
