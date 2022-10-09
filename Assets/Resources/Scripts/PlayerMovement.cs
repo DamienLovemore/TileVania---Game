@@ -143,7 +143,10 @@ public class PlayerMovement : MonoBehaviour
     //(Disable its controls, and play hit animation)
     private void Die()
     {
-        int targetLayer = LayerMask.GetMask("Enemies");
+        //Used to get all the layers that you want to detect with a rigidbody is
+        //colliding with
+        int targetLayer = LayerMask.GetMask("Enemies", "Hazards");
+
         if (playerBodyCollider.IsTouchingLayers(targetLayer))
         {
             isAlive = false;
