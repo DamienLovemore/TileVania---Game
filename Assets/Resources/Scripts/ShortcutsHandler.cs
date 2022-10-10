@@ -4,14 +4,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ShortcutsHandler : MonoBehaviour
-{
-    private GameOver gameOverHandler;
+{    
     private PlayerMovement playerController;
 
     void Start()
-    {
-        //Handle the player death
-        gameOverHandler = FindObjectOfType<GameOver>(); 
+    {        
         //Handles player info and movement
         playerController = FindObjectOfType<PlayerMovement>();
     }
@@ -42,7 +39,9 @@ public class ShortcutsHandler : MonoBehaviour
         //Restart the level on game over
         else if ((Keyboard.current.enterKey.isPressed) && (!playerController.IsPlayerAlive()))
         {
-            gameOverHandler.RestartLevel();
+            //Gets the only script of this type in the scene (level)
+            GameSession gameSessionHandler = FindObjectOfType<GameSession>();
+            gameSessionHandler.RestartLevel();
         }
     }
 }

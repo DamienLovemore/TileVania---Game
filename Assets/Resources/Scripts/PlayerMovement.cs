@@ -21,10 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private BoxCollider2D playerFeetCollider;
     private float gravityStrenght;
 
-    private bool isAlive = true;
-
-    private GameOver gameOverHandler;
-    
+    private bool isAlive = true;    
 
     void Start()
     {
@@ -36,10 +33,7 @@ public class PlayerMovement : MonoBehaviour
 
         playerAnimator = GetComponent<Animator>();
         playerBodyCollider = GetComponent<CapsuleCollider2D>();
-        playerFeetCollider = GetComponent<BoxCollider2D>();
-
-        //Gets the only script of this type in the scene (level)
-        gameOverHandler = FindObjectOfType<GameOver>();
+        playerFeetCollider = GetComponent<BoxCollider2D>();        
     }
         
     void Update()
@@ -183,7 +177,9 @@ public class PlayerMovement : MonoBehaviour
             //To make it more dramatic
             playerRigidbody.velocity = deathKick;
 
-            gameOverHandler.Invoke("ShowGameOverHUD", 1.3f);
+            //Gets the only script of this type in the scene (level)
+            GameSession gameSessionHandler = FindObjectOfType<GameSession>();
+            gameSessionHandler.Invoke("ProcessPlayerDeath", 1.3f);
         }
     }
 

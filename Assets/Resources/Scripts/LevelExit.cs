@@ -27,7 +27,7 @@ public class LevelExit : MonoBehaviour
         int levelNumber = actualScene.buildIndex;
 
         //If it is not on the final level load the next level
-        if (levelNumber != SceneManager.sceneCountInBuildSettings)
+        if (levelNumber != SceneManager.sceneCountInBuildSettings-1)
         {
             SceneManager.LoadScene(levelNumber + 1);
         }
