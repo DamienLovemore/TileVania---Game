@@ -1,14 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TitlePresent : MonoBehaviour
 {
-    [SerializeField] private GameObject levelTitle;
-    [SerializeField] private float textShowTime = 2f;
-
-    void Start()
-    {
-        Destroy(levelTitle, textShowTime);
-    }
+   
 }

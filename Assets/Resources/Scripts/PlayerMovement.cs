@@ -52,7 +52,13 @@ public class PlayerMovement : MonoBehaviour
         //If the player is not alive then do nothing
         if (!isAlive)
             return;
-        
+
+        if (isLevelDescriptionVisible())
+        {
+            GameSession gameSessionHandler = FindObjectOfType<GameSession>();
+            gameSessionHandler.HideLevelTitle();
+        }
+
         //Creates the new bullet
         GameObject newBullet = Instantiate(bulletPrefab, gun.position, transform.rotation);
         //Makes the bullet sprite face the same
@@ -65,6 +71,12 @@ public class PlayerMovement : MonoBehaviour
         if (!isAlive)
             return;
 
+        if (isLevelDescriptionVisible())
+        {
+            GameSession gameSessionHandler = FindObjectOfType<GameSession>();
+            gameSessionHandler.HideLevelTitle();
+        }
+
         //Gets the direction the player is trying to move into
         moveInput = value.Get<Vector2>();
     }
@@ -73,6 +85,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!isAlive)
             return;
+
+        if (isLevelDescriptionVisible())
+        {
+            GameSession gameSessionHandler = FindObjectOfType<GameSession>();
+            gameSessionHandler.HideLevelTitle();
+        }
 
         //Gets the game ground layer
         int targetLayer = LayerMask.GetMask("Ground");
@@ -84,6 +102,18 @@ public class PlayerMovement : MonoBehaviour
                 playerRigidbody.velocity += new Vector2(0f, jumpForce);
             }
         }        
+    }
+
+    private bool isLevelDescriptionVisible()
+    {
+        bool returnValue;
+
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject levelTitle = canvas.transform.GetChild(0).gameObject;
+
+        returnValue = levelTitle.activeSelf;
+
+        return returnValue;
     }
 
     //Returns true if the player is moving.(Pressing Left or Right Arrows)

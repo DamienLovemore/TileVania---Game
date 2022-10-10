@@ -6,11 +6,23 @@ using UnityEngine.SceneManagement;
 
 public class GameSession : MonoBehaviour
 {
-    [SerializeField] int playerLives = 3;
+    [SerializeField] private int playerLives = 3;
+    [SerializeField] private int score = 0;
+
+    [SerializeField] private TextMeshProUGUI textPlayerLives;
+    [SerializeField] private TextMeshProUGUI textPlayerScore;    
 
     void Awake()
     {
+        HideGameOverHUD();
+        ShowLevelTitle();
         KeepJustOneGameSession();
+    }
+
+    void Start()
+    {
+        textPlayerLives.text = $"X{playerLives}";
+        textPlayerScore.text = $"{score}";
     }
 
     //Controls the amount of Game Session objects that only one per level
@@ -33,11 +45,62 @@ public class GameSession : MonoBehaviour
         }
     }
 
+    //Shows the level name and after some seconds hides it
+    public void ShowLevelTitle()
+    {
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject levelTitle = canvas.transform.GetChild(0).gameObject;
+
+        //If it is hidden show it
+        levelTitle.SetActive(true);
+
+        //Gets the text references
+        TextMeshProUGUI textLevelNumber = levelTitle.transform.Find("TextLevelNumber").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI textLevelName = levelTitle.transform.Find("TextLevelName").GetComponent<TextMeshProUGUI>();
+
+        //Gets active scene build number
+        Scene actualScene = SceneManager.GetActiveScene();
+        int levelNumber = actualScene.buildIndex + 1;
+
+        if (levelNumber == 1)
+        {
+            textLevelNumber.text = "Level 1";
+            textLevelName.text = "A fresh journey begins";
+        }
+        else if (levelNumber == 2)
+        {
+            textLevelNumber.text = "Level 2";
+            textLevelName.text = "Watery waters";
+        }
+        else if (levelNumber == 3)
+        {
+            textLevelNumber.text = "Level 3";
+            textLevelName.text = "Bastion Nightmare";
+        }
+    }
+
+    //Hide the current level name after some seconds
+    public void HideLevelTitle()
+    {
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject levelTitle = canvas.transform.GetChild(0).gameObject;
+        levelTitle.SetActive(false);
+    }
+
+    //Hides the show game over on the screen
+    public void HideGameOverHUD()
+    {
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject gameOverHUD = canvas.transform.GetChild(1).gameObject;
+
+        gameOverHUD.SetActive(false);
+    }
+
     //Shows the game over text on the screen
     public void ShowGameOverHUD()
     {
         GameObject canvas = GameObject.Find("Canvas");
-        GameObject gameOverHUD = canvas.transform.GetChild(0).gameObject;
+        GameObject gameOverHUD = canvas.transform.GetChild(1).gameObject;
 
         gameOverHUD.SetActive(true);
        
@@ -70,12 +133,24 @@ public class GameSession : MonoBehaviour
         //Otherwise begins the game all again
         else
         {
-            Debug.Log("Aqui");
             SceneManager.LoadScene(0);
             //Starts the game with a fresh game session
             //(Resets its lifes)
             Destroy(gameObject);
         }
+    }
+
+    //Increases the amount of score the player have
+    public void AddScore(int pointsScore)
+    {
+        score += pointsScore;
+
+        //If the player passes the maximum amount of
+        //score then it reset back to the maximum
+        if (score > 99999)
+            score = 99999;
+
+        textPlayerScore.text = $"{score}";
     }
 
     public void ProcessPlayerDeath()
@@ -86,5 +161,6 @@ public class GameSession : MonoBehaviour
         }
         //Shows the game over screen
         ShowGameOverHUD();
+        textPlayerLives.text = $"X{playerLives}";
     }
 }
