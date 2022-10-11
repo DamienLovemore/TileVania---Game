@@ -29,6 +29,11 @@ public class LevelExit : MonoBehaviour
         //If it is not on the final level load the next level
         if (levelNumber != SceneManager.sceneCountInBuildSettings-1)
         {
+            //Makes the scene persist be destroyed for it to hold the info
+            //of the new level (enemies and pickups)
+            ScenePersist scenePersistHandler = FindObjectOfType<ScenePersist>();
+            scenePersistHandler.ResetScenePersist();
+
             SceneManager.LoadScene(levelNumber + 1);
         }
         //If it is just close the game

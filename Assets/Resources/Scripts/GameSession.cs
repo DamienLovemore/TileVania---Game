@@ -133,6 +133,11 @@ public class GameSession : MonoBehaviour
         //Otherwise begins the game all again
         else
         {
+            //Makes the scene persist be destroyed for it to hold the info
+            //of the new level (enemies and pickups)
+            ScenePersist scenePersistHandler = FindObjectOfType<ScenePersist>();
+            scenePersistHandler.ResetScenePersist();
+
             SceneManager.LoadScene(0);
             //Starts the game with a fresh game session
             //(Resets its lifes)
